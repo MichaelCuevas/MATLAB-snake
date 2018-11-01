@@ -1,0 +1,100 @@
+% Snake Driver created by Michael
+% Version: 2.0 9/25/17
+% Started: 7/2017
+% Description: A custom version of the classic game "Snake" that utilizes a
+% driver program (Snake_driver), and 4 different functions (snake_add,
+% snake_update, isAlive, and combine_shapes). 
+
+clear %clears past game data
+%asks user for difficulty and then sets it accordingly
+diff = input('What difficulty would you like to play at? 1(easy) , 2(medium), or 3(hard)?  ')
+if (diff ~= 1 
+
+%creates the game board
+map = zeros(40,40);
+map(:,[1,40]) = 56; %changes the color of the border to black
+map([1,40],:) = 56; %changes the color of the border to black
+colormap(colorcube(64));
+axis([-40, 40, -40, 40])
+axis square
+
+%allows for user input/movement
+f = figure;
+set(f, 'KeyPressFcn', @(x, y) 0); %callback function to ensure game stays in foreground
+close(figure(1))
+%variables
+snake_alive = 1; %sets snake's life value to alive (updated by isAlive() function)
+x = 10; %variable for x coordinate of snake's head
+y = 10; %variable for y coordinate of snake's head
+d = 29; %sets direction of snake to left
+a = ceil((rand*36)+2); %place the food in a random spot from 2 to 38
+b = ceil((rand*36)+2); %place the food in a random spot from 2 to 38
+snake = [y,x]; %creates a snake of length 1
+
+%driver with three different game difficulties
+%game plays much smoother when a variable is not used in pause() function
+
+if diff == 1 
+    while (snake_alive == 1) %starts the while loop
+        pause(.15) %limits the rate at which the snake moves
+        d=double(get(f,'CurrentCharacter')); %fetches the user input
+        [snake,x,y] = snake_update(snake,d,x,y); %updates the position of the snake
+        snake(1,1) = y; %updates the y coordinate of the head of the snake
+        snake(1,2) = x; %updates the x coordinate of the head of the snake
+        map = combine_shapes(map,snake,a,b); %updates the display matrix
+        if snake(1,1) == a & snake(1,2) == b %checks to see if the snake head is touching a piece of food
+            a = ceil((rand*36)+2); %updates the y coordinate of the food
+            b = ceil((rand*36)+2); %updates the x coordinate of the food
+            snake = snake_add(snake,d); %updates the snake length
+        end
+        snake_alive = isAlive(snake,snake_alive); %checks if the snake is alive
+        imagesc(map,[0,64]) %displays the actions of the game
+        drawnow %ensures matlab draws the image before it does other actions
+    end %ends the game
+end
+
+%game difficulty: medium
+if diff == 2 
+    while (snake_alive == 1) %starts the while loop
+        pause(.08) %limits the rate at which the snake moves
+        d=double(get(f,'CurrentCharacter')); %fetches the user input
+        [snake,x,y] = snake_update(snake,d,x,y); %updates the position of the snake
+        snake(1,1) = y; %updates the y coordinate of the head of the snake
+        snake(1,2) = x; %updates the x coordinate of the head of the snake
+        map = combine_shapes(map,snake,a,b); %updates the display matrix
+        
+        if snake(1,1) == a & snake(1,2) == b %checks to see if the snake head is touching a piece of food
+            a = ceil((rand*36)+2); %updates the y coordinate of the food
+            b = ceil((rand*36)+2); %updates the x coordinate of the food
+            snake = snake_add(snake,d); %updates the snake length
+        end
+        snake_alive = isAlive(snake,snake_alive); %checks if the snake is alive
+        imagesc(map,[0,64]) %displays the actions of the game
+        drawnow %ensures matlab draws the image before it does other actions
+    end %ends the game
+end
+
+%game difficulty: hard
+if diff == 3 
+    while (snake_alive == 1) %starts the while loop
+        pause(.03) %limits the rate at which the snake moves
+        d=double(get(f,'CurrentCharacter')); %fetches the user input
+        [snake,x,y] = snake_update(snake,d,x,y); %updates the position of the snake
+        snake(1,1) = y; %updates the y coordinate of the head of the snake
+        snake(1,2) = x; %updates the x coordinate of the head of the snake
+        map = combine_shapes(map,snake,a,b); %updates the display matrix
+        
+        if snake(1,1) == a & snake(1,2) == b %checks to see if the snake head is touching a piece of food
+            a = ceil((rand*36)+2); %updates the y coordinate of the food
+            b = ceil((rand*36)+2); %updates the x coordinate of the food
+            snake = snake_add(snake,d); %updates the snake length
+        end
+        snake_alive = isAlive(snake,snake_alive); %checks if the snake is alive
+        imagesc(map,[0,64]) %displays the actions of the game
+        drawnow %ensures matlab draws the image before it does other actions
+    end %ends the game
+end
+
+%game over message
+text(18,20,'You Lose') %displays the loss message after game is over
+text(17,22,['Your score: ', num2str((size(snake,1)-1)*5)]) %displays score
